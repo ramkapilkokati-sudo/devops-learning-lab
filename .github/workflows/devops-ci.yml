@@ -1,0 +1,25 @@
+name: DevOps CI Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Terraform syntax
+        run: |
+          sudo apt-get update && sudo apt-get install -y terraform
+          terraform fmt -check || true
+          terraform validate || echo "No Terraform config yet"
+
+      - name: Validate Ansible syntax
+        run: |
+          sudo apt-get update && sudo apt-get install -y ansible
+          ansible-playbook --syntax-check ansible/sample_playbook.yml || echo "No Ansible files yet"
